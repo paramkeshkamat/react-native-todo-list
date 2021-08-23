@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity,TextInput, Alert } from "react-native";
+import { View, StyleSheet, TouchableOpacity, TextInput, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const TodoForm = ({ addTodo }) => {
   const [text, setText] = useState("");
 
   const handleSubmit = () => {
-    if (text.length > 3) {
-      addTodo(text);
+    if (text.trim().length > 3) {
+      addTodo(text.trim());
       setText("");
     } else {
-      Alert.alert("Oops!", "Todo must be atleast 3 letters", [
+      Alert.alert("Oops!", "Todo must be atleast 3 letters!", [
         { text: "Ok", onPress: () => console.log("Ok pressed") },
       ]);
     }
@@ -37,8 +37,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 40,
-    marginHorizontal: 15,
+    margin: 15,
   },
   input: {
     backgroundColor: "#fff",
@@ -48,6 +47,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 50,
     height: 50,
+    width: 100,
   },
   btn: {
     backgroundColor: "dodgerblue",

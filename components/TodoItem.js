@@ -1,10 +1,24 @@
 import React, { useState } from "react";
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 const TodoItem = ({ item, deleteTodo, completeTodo }) => {
   const [isCompleted, setIsCompleted] = useState(item.isCompleted);
+
+  const handleDelete = () => {
+    Alert.alert("", "Do you want to delete this todo?", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("cancelled"),
+      },
+      {
+        text: "Yes",
+        onPress: () => deleteTodo(item.id),
+      },
+    ]);
+  };
+
   return (
     <View style={styles.item}>
       <Text
@@ -29,7 +43,7 @@ const TodoItem = ({ item, deleteTodo, completeTodo }) => {
             completeTodo(item.id);
           }}
         />
-        <TouchableOpacity onPress={() => deleteTodo(item.id)}>
+        <TouchableOpacity onPress={handleDelete}>
           <MaterialIcons name="delete" size={22} />
         </TouchableOpacity>
       </View>

@@ -1,15 +1,11 @@
-import React, { useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { FlatList, StyleSheet, Text, View, TouchableWithoutFeedback, Keyboard } from "react-native";
 import TodoForm from "./components/TodoForm";
 import TodoItem from "./components/TodoItem";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
-  const [todos, setTodos] = useState([
-    { id: "1", text: "todo1", isCompleted: true },
-    { id: "2", text: "todo2", isCompleted: false },
-    { id: "3", text: "todo3", isCompleted: true },
-    { id: "4", text: "todo4", isCompleted: false },
-  ]);
+  const [todos, setTodos] = useState([]);
 
   const addTodo = (text) => {
     setTodos([
@@ -33,32 +29,65 @@ export default function App() {
     });
   };
 
+  useEffect(() => {
+    const getTodosFromAsyncStorage = async () => {
+      try {
+        const data = await AsyncStorage.getItem("todos");
+        if (!data) {
+          setTodos([]);
+        } else {
+          setTodos(JSON.parse(data));
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+    getTodosFromAsyncStorage();
+  }, []);
+
+  useEffect(() => {
+    const addTodosToAsyncStorage = async () => {
+      try {
+        await AsyncStorage.setItem("todos", JSON.stringify(todos));
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+    addTodoToAsyncStorage();
+  }, [todos]);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Todo List</Text>
-      </View>
-      <View style={styles.itemsContainer}>
-        {todos.length === 0 ? (
-          <Text style={styles.text}>No todos to display...</Text>
-        ) : (
-          <FlatList
-            data={todos}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TodoItem
-                item={item}
-                deleteTodo={deleteTodo}
-                completeTodo={completeTodo}
+    <>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>Todo List</Text>
+          </View>
+          <View style={styles.itemsContainer}>
+            {todos?.length > 0 ? (
+              <FlatList
+                data={todos}
+                keyExtractor={(item) => item.id}
+                style={styles.list}
+                refreshControl={<RefreshControl}
+                renderItem={({ item }) => (
+                  <TodoItem
+                    item={item}
+                    deleteTodo={deleteTodo}
+                    completeTodo={completeTodo}
+                  />
+                )}
               />
+            ) : (
+              <Text style={styles.text}>No todos to display...</Text>
             )}
-          />
-        )}
-      </View>
-      <View>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
+      <View style={styles.formContainer}>
         <TodoForm addTodo={addTodo} />
       </View>
-    </View>
+    </>
   );
 }
 
@@ -67,6 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#eee",
     height: 100,
+    position: "relative",
   },
   header: {
     backgroundColor: "dodgerblue",
@@ -81,13 +111,22 @@ const styles = StyleSheet.create({
   },
   itemsContainer: {
     flex: 1,
-    marginHorizontal: 15,
-    marginTop: 20,
+  },
+  list: {
+    paddingHorizontal: 15,
+    paddingTop: 20,
   },
   text: {
     textAlign: "center",
     color: "gray",
     marginTop: 30,
     fontSize: 16,
+  },
+  formContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#eee",
   },
 });
