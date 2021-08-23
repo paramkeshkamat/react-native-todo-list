@@ -53,7 +53,7 @@ export default function App() {
         console.log(err.message);
       }
     };
-    addTodoToAsyncStorage();
+    addTodosToAsyncStorage();
   }, [todos]);
 
   return (
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "dodgerblue",
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     paddingTop: 40,
   },
   headerText: {
