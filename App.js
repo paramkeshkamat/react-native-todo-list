@@ -69,7 +69,6 @@ export default function App() {
                 data={todos}
                 keyExtractor={(item) => item.id}
                 style={styles.list}
-                refreshControl={<RefreshControl}
                 renderItem={({ item }) => (
                   <TodoItem
                     item={item}
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "dodgerblue",
-    paddingVertical: 20,
+    paddingVertical: 10,
     paddingHorizontal: 15,
     paddingTop: 40,
   },
